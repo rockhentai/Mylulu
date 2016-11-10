@@ -1,0 +1,21 @@
+{
+  "name": "mylulu",
+  "version": "1.0.0",
+  "description": "photo gallery",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "es6"
+  ],
+  "author": "rockhentai",
+  "license": "MIT",
+  "devDependencies": {
+    "crypto-browserify": "^3.11.0",
+    "lodash": "^4.16.6",
+    "min": "^0.1.16",
+    "min-model": "^0.1.11",
+    "qiniu.js": "^0.1.1"
+  }
+}
