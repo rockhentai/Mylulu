@@ -33,10 +33,31 @@ const Config = {
     return myluBucket.fetchPutToken(password)
       .then(putToken => {
         //加载旧的配置数据
-        return load()
+        return Config.load()
           .then(oldConfig => [oldConfig,putToken])
           //如果未初始化，就传递一个空对象
           .catch(() => [{},putToken])
+      })
+      .then(([config,putToken]) => {
+        if(isPlainObject(key)) {
+          for(const _key of Object.keys(key)) {
+            config[_key] = key[_key];
+          }
+        } else if(isString(key) && isString(value)) {
+          config[key] = value;
+        }
+
+        //更新数据
+        const fileData = new Blob([JSON.stringify(config)],{type:'application/json'});
+        fileData.name = 'config.json';
+
+        return myluBucket.putFile(
+          fileData.name,
+          fileData,
+          {
+            putToken:putToken
+          }
+        )
       })
   }
 }
