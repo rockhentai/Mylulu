@@ -1,6 +1,8 @@
 import min from 'min';
 import Model from 'min-model';
 import myluBucket from './myluBucket';
+import ChineseStringIndexer from '../libs/chinese-string-indexer.js';
+import {isString} from 'lodash';
 
 Model.use(min);
 
@@ -10,6 +12,10 @@ const Category = Model.extend('category',{
   subtitle:String,
   cover:String
 });
+
+Category.setIndexerForColum('title',ChineseStringIndexer);
+Category.setIndex('title');//标题，中文
+Category.setIndex('name');//名称，英文
 
 let ready = false;
 
@@ -51,4 +57,31 @@ Category.loadIfNotInit = function() {
   } else {
     return Promise.resolve();
   }
+}
+
+Category.saveToCloud = function(password) {
+  //密码变量类型检查
+  if(!isString(password)) {
+    throw new TypeError('Password must be a string');
+  }
+
+  //获取上传凭证
+  return myluBucket.fetchPutToken(password)
+    .then(putToken => {
+      return Category.dump()
+        .then(data => [data,putToken])
+    })
+    .then(([data,putToken]) => {
+      const fileData = new Blob([JSON.stringify(data)],{type:'application/json'});
+      fileData.name = 'categories.json';
+
+      //上传数据
+      return myluBucket.putFile(
+        fileData.name,
+        fileData,
+        {
+          putToken:putToken
+        }
+      )
+    })
 }
