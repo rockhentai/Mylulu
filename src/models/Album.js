@@ -4,6 +4,8 @@ import myluBucket from './myluBucket'
 import ChineseStringIndexer from '../libs/chinese-string-indexer.js'
 import {isString} from 'lodash'
 
+Model.use(min)
+
 const Album = Model.extend('album',{
   title:String,
   content:String,
@@ -12,7 +14,20 @@ const Album = Model.extend('album',{
   photos:Array
 });
 
+Album.setIndexerForColumn('title',ChineseStringIndexer)
+Album.setIndexerForColumn('content',ChineseStringIndexer)
+Album.setIndex('title')
+Album.setIndex('content')
+
 let ready = false
+
+Album.fetchByCategory = function(categoryName) {
+  return Album.loadIfNotInit()
+    .then(() => Album.search('category',categoryName))
+    .then(albums => albums.sort((a,b) => {
+      return a.created_at < b.created_at
+    }))
+}
 
 Album.load = function() {
   return Album.allInstances()
@@ -72,3 +87,5 @@ Album.saveToCloud = function(password) {
       )
     })
 }
+
+export default Album
