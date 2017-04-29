@@ -1,7 +1,7 @@
 <template>
   <div class="content-category" :class="{'as-title':asTitle}">
     <div class="card-image">
-      <img src="category.cover" alt="">
+      <img :src="category.cover | thumbnail" alt="">
       <span class="card-title">{{category.title}}</span>
       <span class="card-desc">{{category.subtitle}}</span>
     </div>
@@ -10,7 +10,13 @@
 
 <script>
 export default {
-  props:['category']
+  props:['category','asTitle'],
+
+  filters:{
+    thumbnail(photo) {
+      return `${photo}?imageMogr2/thumbnail/!1000x1000r`
+    }
+  }
 }
 </script>
 

@@ -12,8 +12,16 @@
 </template>
 
 <script>
+import 'lazysizes/lazysizes.min'
+
 export default {
-  props:['albums']
+  props:['albums'],
+
+  filters:{
+    thumbnail(photo) {
+      return `${photo}?imageMogr2/thumbnail/!500x500r`
+    }
+  }
 }
 </script>
 
